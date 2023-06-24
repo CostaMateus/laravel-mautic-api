@@ -1,5 +1,5 @@
 {
-    "name": "costamateus/laravel-mautic-api",
+    "name": "alexdoan/laravel-mautic-api",
     "description": "Free and Open Source Marketing Automation API",
     "license": "MIT",
     "keywords": ["mautic", "laravel", "laravel 8", "api", "sync", "automation", "email", "marketing"],
