@@ -19,5 +19,15 @@
         "psr-4": {
             "Triibo\\Mautic\\": "src/"
         }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Triibo\\Mautic\\MauticServiceProvider"
+            ],
+            "aliases": {
+                "Mautic": "Triibo\\Mautic\\Facades\\Mautic"
+            }
+        }
     }
 }

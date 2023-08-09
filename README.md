@@ -1,9 +1,9 @@
-# Mautic API in Laravel 8.
+# Mautic API in Laravel 10.
 Free and Open Source Marketing Automation API
 
 ## Requirements
-* Laravel ^8.0
-* PHP ^7.3 or newer
+* Laravel ^10.0
+* PHP ^8.1 or newer
 * cURL support
 
 ## Mautic Setup
@@ -16,9 +16,9 @@ After saving the configuration, go to the API Credentials page (located in the S
 ## Installation
 First, you'll need to require the package with Composer:
 ```sh
-composer require costamateus/laravel-mautic-api
+composer require leaderagenciadigital/laravel-mautic-api
 ```
-Aftwards, run `composer update` from your command line.
+Afterward, run `composer update` from your command line.
 
 Then, update `config/app.php` by adding an entry for the service provider.
 
@@ -170,7 +170,7 @@ Mautic::request('Delete','contacts/1/delete');
     "contacts/list/fields",
     "contacts/{contact_id}/notes",
     "contacts/{contact_id}/segments",
-    "contacts/{contact_id}/campaigns"
+    "contacts/{contact_id}/campaigns",
     "contacts/{contact_id}/events",
     "contacts/{contact_id}/activity",
     "contacts/activity",
