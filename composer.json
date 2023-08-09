@@ -7,7 +7,7 @@
         "name": "Gleydson Silva",
         "email": "agencia@leadertecnologia.com.br"
     }],
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "require": {
         "php": "^7.3|^8.0",
         "laravel/framework": "^10.0",
