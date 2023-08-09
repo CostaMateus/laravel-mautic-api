@@ -2,15 +2,13 @@
 
 namespace Triibo\Mautic;
 
-use Mautic\Auth\OAuthClient;
-use Triibo\Mautic\Models\MauticConsumer;
-use Triibo\Mautic\Factories\MauticFactory;
 use GrahamCampbell\Manager\AbstractManager;
 use Illuminate\Contracts\Config\Repository;
+use Triibo\Mautic\Factories\MauticFactory;
+use Triibo\Mautic\Models\MauticConsumer;
 
 class Mautic extends AbstractManager
 {
-
     /**
      * The factory instance.
      *
@@ -21,14 +19,12 @@ class Mautic extends AbstractManager
     /**
      * Create a new Mautic manager instance.
      *
-     * @param $config
-     * @param $factory
      *
      * @return void
      */
-    public function __construct( Repository $config, MauticFactory $factory )
+    public function __construct(Repository $config, MauticFactory $factory)
     {
-        parent::__construct( $config );
+        parent::__construct($config);
 
         $this->factory = $factory;
     }
@@ -36,29 +32,26 @@ class Mautic extends AbstractManager
     /**
      * Create the connection instance.
      *
-     * @param array $config
      *
      * @return mixed
      */
-    protected function createConnection( array $config )
+    protected function createConnection(array $config): object
     {
-        return $this->factory->make( $config );
+        return $this->factory->make($config);
     }
 
     /**
      * Get the configuration name.
-     *
-     * @return string
      */
-    protected function getConfigName()
+    protected function getConfigName(): string
     {
-        return "mautic";
+        return 'mautic';
     }
 
     /**
      * Get the factory instance.
      *
-     * @return \Mautic\MauticFactory
+     * @return \Mautic\Factory
      */
     public function getFactory()
     {
@@ -66,21 +59,21 @@ class Mautic extends AbstractManager
     }
 
     /**
-     * @param null $method
-     * @param null $endpoints
-     * @param null $body
+     * @param  null  $method
+     * @param  null  $endpoints
+     * @param  null  $body
      * @return mixed
      */
-    public function request( $method = null, $endpoints = null, $body = null )
+    public function request($method = null, $endpoints = null, $body = null)
     {
-        $consumer         = MauticConsumer::whereNotNull( "id" )->orderBy( "created_at", "desc" )->first();
+        $consumer = MauticConsumer::whereNotNull('id')->orderBy('created_at', 'desc')->first();
 
-        $expirationStatus = $this->factory->checkExpirationTime( $consumer->expires );
+        $expirationStatus = $this->factory->checkExpirationTime($consumer->expires);
 
-        if ( $expirationStatus == true )
-            $consumer = $this->factory->refreshToken( $consumer->refresh_token );
+        if ($expirationStatus) {
+            $consumer = $this->factory->refreshToken($consumer->refresh_token);
+        }
 
-        return $this->factory->callMautic( $method, $endpoints, $body, $consumer->access_token );
+        return $this->factory->callMautic($method, $endpoints, $body, $consumer->access_token);
     }
-
 }

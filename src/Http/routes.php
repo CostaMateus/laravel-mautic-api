@@ -7,4 +7,4 @@
 |
 */
 
-Route::get( "application/register", "MauticController@initiateApplication" );
+Route::get('application/register', 'MauticController@initiateApplication');

@@ -3,105 +3,102 @@
 namespace Triibo\Mautic\Factories;
 
 use GuzzleHttp\Client;
-use Mautic\Auth\ApiAuth;
-use Illuminate\Support\Arr;
-use Mautic\Auth\OAuthClient;
-use Triibo\Mautic\Models\MauticConsumer;
 use GuzzleHttp\Exception\ClientException;
+use Illuminate\Support\Arr;
+use Mautic\Auth\ApiAuth;
+use Triibo\Mautic\Models\MauticConsumer;
 
 class MauticFactory
 {
-
     public function getDefaultConnection()
     {
-        $connectionName = config( "mautic.default" );
+        $connectionName = config('mautic.default');
 
-        return config( "mautic.connections.$connectionName" );
+        return config("mautic.connections.$connectionName");
     }
 
     /**
      * Make a new Mautic url.
      *
-     * @param string $endpoints
+     * @param  string  $endpoints
      * @return url
      */
-    protected function getMauticUrl( $endpoints = null )
+    protected function getMauticUrl($endpoints = null)
     {
         $conn = $this->getDefaultConnection();
-        $url  = $conn[ "baseUrl" ] . "/";
+        $url = $conn['baseUrl'].'/';
 
-        return ( !empty( $endpoints ) ) ? $url . $endpoints : $url;
+        return (! empty($endpoints)) ? $url.$endpoints : $url;
     }
 
     /**
      * Check AccessToken Expiration Time
-     * @param $expireTimestamp
+     *
      * @return bool
      */
-    public function checkExpirationTime( $expireTimestamp )
+    public function checkExpirationTime($expireTimestamp)
     {
         $now = time();
 
-        return ( $now > $expireTimestamp ) ? true : false;
+        return ($now > $expireTimestamp) ? true : false;
     }
 
     /**
      * Make a new Mautic client.
      *
-     * @param array $config
      * @return \Mautic\Config
      */
-    public function make( array $config )
+    public function make(array $config)
     {
-        $config = $this->getConfig( $config );
-        return $this->getClient( $config );
+        $config = $this->getConfig($config);
+
+        return $this->getClient($config);
     }
 
     /**
      * Get the configuration data.
      *
-     * @param array $config
-     *
-     * @throws \InvalidArgumentException
      *
      * @return array
+     *
+     * @throws \InvalidArgumentException
      */
-    protected function getConfig( array $config )
+    protected function getConfig(array $config)
     {
-        $keys = [ "clientKey", "clientSecret" ];
+        $keys = ['clientKey', 'clientSecret'];
 
-        foreach ( $keys as $key )
-            if ( !array_key_exists( $key, $config ) )
-                throw new \InvalidArgumentException( "The Mautic client requires configuration." );
+        foreach ($keys as $key) {
+            if (! array_key_exists($key, $config)) {
+                throw new \InvalidArgumentException('The Mautic client requires configuration.');
+            }
+        }
 
-        return Arr::only( $config, [ "version", "baseUrl", "clientKey", "clientSecret", "callback" ] );
+        return Arr::only($config, ['version', 'baseUrl', 'clientKey', 'clientSecret', 'callback']);
     }
 
     /**
      * Get the Mautic client.
      *
-     * @param array $setting
      *
      * @return \Mautic\MauticConsumer
      */
-    protected function getClient( array $setting )
+    protected function getClient(array $setting)
     {
-        session_name( "mauticOAuth" );
+        session_name('mauticOAuth');
         session_start();
 
         // Initiate the auth object
         $initAuth = new ApiAuth();
-        $auth     = $initAuth->newAuth( $setting );
+        $auth = $initAuth->newAuth($setting);
 
         // Initiate process for obtaining an access token; this will redirect the user to the $authorizationUrl and/or
         // set the access_tokens when the user is redirected back after granting authorization
 
-        if ( $auth->validateAccessToken() )
-        {
-            if ( $auth->accessTokenUpdated() )
-            {
+        if ($auth->validateAccessToken()) {
+            if ($auth->accessTokenUpdated()) {
                 $accessTokenData = $auth->getAccessTokenData();
-                return  MauticConsumer::create( $accessTokenData );
+
+                return MauticConsumer::create($accessTokenData);
             }
         }
     }
@@ -109,56 +106,48 @@ class MauticFactory
     /**
      * Call Mautic Api
      *
-     * @throws \ClientException
-     *
-     * @param $method
-     * @param $endpoints
-     * @param $body
-     * @param $token
-     *
      * @return mixed
+     *
+     * @throws \ClientException
      */
-    public function callMautic( $method, $endpoints, $body, $token )
+    public function callMautic($method, $endpoints, $body, $token)
     {
-        $mauticURL = $this->getMauticUrl( "api/$endpoints" );
-        $conn      = $this->getDefaultConnection();
+        $mauticURL = $this->getMauticUrl("api/$endpoints");
+        $conn = $this->getDefaultConnection();
 
-        $params    = [];
+        $params = [];
 
-        if ( !empty( $body ) )
-            foreach ( $body as $key => $item )
-                $params[ "form_params" ][ $key ] = $item;
-
-        if ( $conn[ "version" ] == "BasicAuth" )
-        {
-            $user = $conn[ "username" ];
-            $pass = $conn[ "password" ];
-            $b64  = base64_encode( "$user:$pass" );
-            $auth = "Basic $b64";
+        if (! empty($body)) {
+            foreach ($body as $key => $item) {
+                $params['form_params'][$key] = $item;
+            }
         }
-        else
-        {
+
+        if ($conn['version'] == 'BasicAuth') {
+            $user = $conn['username'];
+            $pass = $conn['password'];
+            $b64 = base64_encode("$user:$pass");
+            $auth = "Basic $b64";
+        } else {
             $auth = "Bearer $token";
         }
 
         $headers = [
-            "headers" => [
-                "Authorization" => $auth,
-            ]
+            'headers' => [
+                'Authorization' => $auth,
+            ],
         ];
 
-        $client  = new Client( $headers );
+        $client = new Client($headers);
 
-        try
-        {
-            $response             = $client->request( $method, $mauticURL, $params );
+        try {
+            $response = $client->request($method, $mauticURL, $params);
             $responseBodyAsString = $response->getBody();
 
-            return json_decode( $responseBodyAsString, true );
-        }
-        catch ( ClientException $e )
-        {
+            return json_decode($responseBodyAsString, true);
+        } catch (ClientException $e) {
             $exceptionResponse = $e->getResponse();
+
             return $statusCode = $exceptionResponse->getStatusCode();
         }
     }
@@ -167,44 +156,39 @@ class MauticFactory
      * Generate new token once old one expire
      * and store in consumer table.
      *
-     * @throws \ClientException
-     *
-     * @param $refreshToken
-     *
      * @return MauticConsumer
+     *
+     * @throws \ClientException
      */
-    public function refreshToken( $refreshToken )
+    public function refreshToken($refreshToken)
     {
-        $mauticURL = $this->getMauticUrl( "oauth/v2/token" );
+        $mauticURL = $this->getMauticUrl('oauth/v2/token');
 
-        $config    = config( "mautic.connections.main" );
+        $config = config('mautic.connections.main');
 
-        $client    = new Client();
+        $client = new Client();
 
-        try
-        {
-            $response = $client->request( "POST", $mauticURL, array(
-                "form_params" => [
-                    "client_id"     => $config[ "clientKey" ],
-                    "client_secret" => $config[ "clientSecret" ],
-                    "redirect_uri"  => $config[ "callback" ],
-                    "refresh_token" => $refreshToken,
-                    "grant_type"    => "refresh_token"
-                ]
-            ) );
+        try {
+            $response = $client->request('POST', $mauticURL, [
+                'form_params' => [
+                    'client_id' => $config['clientKey'],
+                    'client_secret' => $config['clientSecret'],
+                    'redirect_uri' => $config['callback'],
+                    'refresh_token' => $refreshToken,
+                    'grant_type' => 'refresh_token',
+                ],
+            ]);
 
             $responseBodyAsString = $response->getBody();
-            $responseBodyAsString = json_decode( $responseBodyAsString, true );
+            $responseBodyAsString = json_decode($responseBodyAsString, true);
 
-            return MauticConsumer::create( [
-                "access_token"  => $responseBodyAsString[ "access_token" ],
-                "expires"       => time() + $responseBodyAsString[ "expires_in" ],
-                "token_type"    => $responseBodyAsString[ "token_type" ],
-                "refresh_token" => $responseBodyAsString[ "refresh_token" ]
-            ] );
-        }
-        catch ( ClientException $e )
-        {
+            return MauticConsumer::create([
+                'access_token' => $responseBodyAsString['access_token'],
+                'expires' => time() + $responseBodyAsString['expires_in'],
+                'token_type' => $responseBodyAsString['token_type'],
+                'refresh_token' => $responseBodyAsString['refresh_token'],
+            ]);
+        } catch (ClientException $e) {
             return $exceptionResponse = $e->getResponse();
         }
     }
