@@ -10,7 +10,7 @@
     "minimum-stability": "stable",
     "require": {
         "php": "^7.3|^8.0",
-        "laravel/framework": "^8.0",
+        "laravel/framework": "^10.0",
         "mautic/api-library": "^3.0",
         "guzzlehttp/guzzle": "^7.0.1",
         "graham-campbell/manager": "^4.6"
