@@ -1,19 +1,20 @@
 {
     "name": "leaderagenciadigital/laravel-mautic-api",
     "description": "Free and Open Source Marketing Automation API",
+    "type": "library",
     "license": "MIT",
     "keywords": ["mautic", "laravel", "laravel 10", "api", "sync", "automation", "email", "marketing"],
     "authors": [{
         "name": "Gleydson Silva",
         "email": "agencia@leadertecnologia.com.br"
     }],
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "require": {
         "php": "^7.3|^8.0",
         "laravel/framework": "^10.0",
         "mautic/api-library": "^3.0",
         "guzzlehttp/guzzle": "^7.0.1",
-        "graham-campbell/manager": "^4.6"
+        "graham-campbell/manager": "^v5.0.0"
     },
     "autoload": {
         "psr-4": {
