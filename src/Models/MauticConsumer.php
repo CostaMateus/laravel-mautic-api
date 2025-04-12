@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types = 1);
-
 namespace Triibo\Mautic\Models;
 
 use Illuminate\Database\Eloquent\Model;

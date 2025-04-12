@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types = 1);
-
 namespace Triibo\Mautic\Http\Controllers;
 
 use Triibo\Mautic\Facades\Mautic;

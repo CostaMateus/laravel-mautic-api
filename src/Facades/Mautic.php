@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types = 1);
-
 namespace Triibo\Mautic\Facades;
 
 use Illuminate\Support\Facades\Facade;

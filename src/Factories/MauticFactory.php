@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types = 1);
-
 namespace Triibo\Mautic\Factories;
 
 use GuzzleHttp\Client;
@@ -22,7 +20,7 @@ class MauticFactory
     {
         $connectionName = config( "mautic.default" );
 
-        return config( "mautic.connections.{$connectionName}" );
+        return config( "mautic.connections" )[ $connectionName ];
     }
 
     /**
