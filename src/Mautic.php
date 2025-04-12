@@ -2,9 +2,10 @@
 
 namespace Triibo\Mautic;
 
+use Mautic\{Factory, MauticConsumer};
+use Triibo\Mautic\Factories\MauticFactory;
 use GrahamCampbell\Manager\AbstractManager;
 use Illuminate\Contracts\Config\Repository;
-use Mautic\{Factory, MauticConsumer, MauticFactory};
 
 class Mautic extends AbstractManager
 {
