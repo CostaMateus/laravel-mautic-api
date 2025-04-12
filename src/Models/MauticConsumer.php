@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Triibo\Mautic\Models;
 
 use Illuminate\Database\Eloquent\Model;
@@ -9,19 +11,19 @@ class MauticConsumer extends Model
     /**
      * The database table used by the model.
      *
-     * @var     string
+     * @var string
      */
-    protected $table    = "mautic_consumer";
+    protected $table = "mautic_consumer";
 
     /**
      * The attributes that are mass assignable.
      *
-     * @var     array
+     * @var array
      */
     protected $fillable = [
         "access_token",
         "expires",
         "token_type",
-        "refresh_token"
+        "refresh_token",
     ];
 }

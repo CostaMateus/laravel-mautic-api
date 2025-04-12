@@ -1,28 +1,29 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Triibo\Mautic;
 
-use Mautic\Factory;
-use Mautic\MauticFactory;
-use Mautic\MauticConsumer;
 use GrahamCampbell\Manager\AbstractManager;
 use Illuminate\Contracts\Config\Repository;
+use Mautic\{Factory, MauticConsumer, MauticFactory};
 
 class Mautic extends AbstractManager
 {
     /**
      * The factory instance.
      *
-     * @var     Factory
+     * @var Factory
      */
     protected $factory;
 
     /**
      * Create a new Mautic manager instance.
      *
-     * @param   Repository      $config
-     * @param   MauticFactory   $factory
-     * @return  void
+     * @param Repository    $config
+     * @param MauticFactory $factory
+     *
+     * @return void
      */
     public function __construct( Repository $config, MauticFactory $factory )
     {
@@ -32,30 +33,9 @@ class Mautic extends AbstractManager
     }
 
     /**
-     * Create the connection instance.
-     *
-     * @param   array   $config
-     * @return  mixed
-     */
-    protected function createConnection( array $config )
-    {
-        return $this->factory->make( $config );
-    }
-
-    /**
-     * Get the configuration name.
-     *
-     * @return  string
-     */
-    protected function getConfigName()
-    {
-        return "mautic";
-    }
-
-    /**
      * Get the factory instance.
      *
-     * @return  MauticFactory
+     * @return MauticFactory
      */
     public function getFactory()
     {
@@ -65,10 +45,11 @@ class Mautic extends AbstractManager
     /**
      * Makes a request to Mautic.
      *
-     * @param   string|null     $method
-     * @param   string|null     $endpoints
-     * @param   array|null      $body
-     * @return  mixed
+     * @param null|string $method
+     * @param null|string $endpoints
+     * @param null|array  $body
+     *
+     * @return mixed
      */
     public function request( ?string $method = null, ?string $endpoints = null, ?array $body = null )
     {
@@ -78,5 +59,27 @@ class Mautic extends AbstractManager
             $consumer = $this->factory->make( config( "mautic.connections.main" ) );
 
         return $this->factory->callMautic( $method, $endpoints, $body, $consumer->access_token );
+    }
+
+    /**
+     * Create the connection instance.
+     *
+     * @param array $config
+     *
+     * @return object
+     */
+    protected function createConnection( array $config ) : object
+    {
+        return $this->factory->make( $config );
+    }
+
+    /**
+     * Get the configuration name.
+     *
+     * @return string
+     */
+    protected function getConfigName() : string
+    {
+        return "mautic";
     }
 }

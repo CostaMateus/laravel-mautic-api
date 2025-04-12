@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types = 1);
+
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
@@ -8,11 +10,11 @@ class MauticApiConsumerKey extends Migration
     /**
      * Run the migrations.
      *
-     * @return  void
+     * @return void
      */
-    public function up()
+    public function up() : void
     {
-        Schema::create( "mautic_consumer", function ( Blueprint $table )
+        Schema::create( "mautic_consumer", static function ( Blueprint $table ) : void
         {
             $table->increments( "id" );
             $table->string( "access_token" );
@@ -26,9 +28,9 @@ class MauticApiConsumerKey extends Migration
     /**
      * Reverse the migrations.
      *
-     * @return  void
+     * @return void
      */
-    public function down()
+    public function down() : void
     {
         Schema::drop( "mautic_consumer" );
     }
