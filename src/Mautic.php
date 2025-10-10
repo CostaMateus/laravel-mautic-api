@@ -54,8 +54,25 @@ class Mautic extends AbstractManager
     {
         $consumer = MauticConsumer::whereNotNull( "id" )->orderBy( "created_at", "desc" )->first();
 
-        if ( empty( $consumer ) || $this->factory->checkExpirationTime( $consumer->expires ) )
+        if ( empty( $consumer ) ) {
+            // No consumer exists, create new one via OAuth flow
             $consumer = $this->factory->make( config( "mautic.connections.main" ) );
+        } elseif ( $this->factory->checkExpirationTime( $consumer->expires ) ) {
+            // Token expired, try to refresh first
+            if ( $consumer->refresh_token ) {
+                $refreshedConsumer = $this->factory->refreshToken( $consumer->refresh_token );
+                
+                if ( $refreshedConsumer instanceof MauticConsumer ) {
+                    $consumer = $refreshedConsumer;
+                } else {
+                    // Refresh failed, fall back to new OAuth flow
+                    $consumer = $this->factory->make( config( "mautic.connections.main" ) );
+                }
+            } else {
+                // No refresh token available, create new one via OAuth flow
+                $consumer = $this->factory->make( config( "mautic.connections.main" ) );
+            }
+        }
 
         return $this->factory->callMautic( $method, $endpoints, $body, $consumer->access_token );
     }
