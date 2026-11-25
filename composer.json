@@ -18,13 +18,13 @@
     },
     "autoload": {
         "psr-4": {
-            "Triibo\\Mautic\\": "src/"
+            "CostaMateus\\Mautic\\": "src/"
         }
     },
     "extra": {
         "laravel": {
-            "providers": ["Triibo\\Mautic\\MauticServiceProvider"],
-            "aliases": {"Mautic": "Triibo\\Mautic\\Facades\\Mautic"}
+            "providers": ["CostaMateus\\Mautic\\MauticServiceProvider"],
+            "aliases": {"Mautic": "CostaMateus\\Mautic\\Facades\\Mautic"}
         }
     },
     "scripts": {

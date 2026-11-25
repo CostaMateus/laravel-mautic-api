@@ -1,12 +1,12 @@
 <?php
 
-namespace Triibo\Mautic;
+namespace CostaMateus\Mautic;
 
-use Triibo\Mautic\Models\MauticConsumer;
-use Triibo\Mautic\Exceptions\MauticException;
-use Triibo\Mautic\Factories\MauticFactory;
 use GrahamCampbell\Manager\AbstractManager;
 use Illuminate\Contracts\Config\Repository;
+use CostaMateus\Mautic\Models\MauticConsumer;
+use CostaMateus\Mautic\Factories\MauticFactory;
+use CostaMateus\Mautic\Exceptions\MauticException;
 
 class Mautic extends AbstractManager
 {

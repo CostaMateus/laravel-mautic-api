@@ -6,12 +6,45 @@ Free and Open Source Marketing Automation API
 * Laravel ^12.0 or ^13.0 (Laravel 13 requires PHP ^8.3)
 * Mautic API Library ^4.0, Guzzle ^7.17 and Graham Campbell Manager ^5.3
 
-Version **4.0.0** adds Laravel 13 support and upgrades the Mautic SDK to version 4.
+Version **5.0.0** renames the public namespace to `CostaMateus\Mautic`.
+Laravel, PHP and Mautic SDK requirements remain the same as version 4.
 PHP 8.2–8.5 are covered by the compatibility matrix, subject to Laravel's own PHP requirements.
 PHP 8.6 checks are experimental until Laravel officially lists support for it.
 See [CHANGELOG.md](CHANGELOG.md) for the compatibility investigation, upgrade notes and validation limits.
 
-### Previous releases
+## Upgrading from 4.x to 5.x
+
+While version 4 and the old namespace references are still installed, drain any
+jobs serialized with old class names and clear the application caches:
+
+```sh
+php artisan optimize:clear
+```
+
+Replace `Triibo\Mautic` with `CostaMateus\Mautic` in application imports,
+manual provider registrations, fully qualified class names, extended package
+classes and references in configuration or serialized jobs. No aliases for the
+old namespace are provided.
+
+```php
+use CostaMateus\Mautic\Facades\Mautic;
+```
+
+The Composer package name remains `costamateus/laravel-mautic-api`:
+
+```sh
+composer require costamateus/laravel-mautic-api:^5.0
+php artisan optimize:clear
+```
+
+Update any old manual provider entry before running Composer, because Laravel's
+Composer scripts may boot the application. Applications using package discovery
+do not need manual provider registration. Restart long-running workers after
+upgrading; jobs serialized with old class names must be drained before upgrading
+or explicitly migrated. Existing Mautic configuration, credentials, tokens and
+database schema are unchanged; no migration needs to be republished or rerun.
+
+## Previous releases
 
 ### v 2.0.7
 * Laravel ^8.0
@@ -46,8 +79,8 @@ First, you'll need to require the package with Composer:
 composer require costamateus/laravel-mautic-api
 ```
 Laravel automatically discovers the service provider and facade. If package discovery is disabled,
-register `Triibo\Mautic\MauticServiceProvider::class` in `bootstrap/providers.php`.
-Finally, from the command line run `php artisan vendor:publish --provider="Triibo\Mautic\MauticServiceProvider"` to publish the default configuration file.
+register `CostaMateus\Mautic\MauticServiceProvider::class` in `bootstrap/providers.php`.
+Finally, from the command line run `php artisan vendor:publish --provider="CostaMateus\Mautic\MauticServiceProvider"` to publish the default configuration file.
 This publishes `config/mautic.php` and the consumer migration. The model is autoloaded from the package.
 
 Then, run `php artisan migrate` migration command to create consumer table in your database.
@@ -84,7 +117,7 @@ http://your-app.com/mautic/application/register
 # Usage
 Add Mautic Facade in your controller.
 ```php
-use Triibo\Mautic\Facades\Mautic;
+use CostaMateus\Mautic\Facades\Mautic;
 ```
 #### Send a request to mautic ( Example )
 Create a new contact in mautic.

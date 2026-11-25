@@ -1,6 +1,6 @@
 <?php
 
-namespace Triibo\Mautic\Exceptions;
+namespace CostaMateus\Mautic\Exceptions;
 
 use Exception;
 

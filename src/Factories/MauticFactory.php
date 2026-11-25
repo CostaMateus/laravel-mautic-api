@@ -1,13 +1,13 @@
 <?php
 
-namespace Triibo\Mautic\Factories;
+namespace CostaMateus\Mautic\Factories;
 
 use GuzzleHttp\Client;
 use Mautic\Auth\ApiAuth;
 use Illuminate\Support\Arr;
 use InvalidArgumentException;
-use Triibo\Mautic\Models\MauticConsumer;
 use GuzzleHttp\Exception\ClientException;
+use CostaMateus\Mautic\Models\MauticConsumer;
 
 class MauticFactory
 {

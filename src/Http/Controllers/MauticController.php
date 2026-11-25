@@ -1,10 +1,10 @@
 <?php
 
-namespace Triibo\Mautic\Http\Controllers;
+namespace CostaMateus\Mautic\Http\Controllers;
 
-use Triibo\Mautic\Facades\Mautic;
 use Illuminate\Routing\Controller;
-use Triibo\Mautic\Models\MauticConsumer;
+use CostaMateus\Mautic\Facades\Mautic;
+use CostaMateus\Mautic\Models\MauticConsumer;
 
 class MauticController extends Controller
 {

@@ -31,10 +31,10 @@ use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\Facades\Schema;
-use Triibo\Mautic\Factories\MauticFactory;
-use Triibo\Mautic\Mautic;
-use Triibo\Mautic\MauticServiceProvider;
-use Triibo\Mautic\Models\MauticConsumer;
+use CostaMateus\Mautic\Factories\MauticFactory;
+use CostaMateus\Mautic\Mautic;
+use CostaMateus\Mautic\MauticServiceProvider;
+use CostaMateus\Mautic\Models\MauticConsumer;
 
 error_reporting(E_ALL);
 set_error_handler(static function ($severity, $message, $file, $line) {
@@ -84,6 +84,8 @@ try {
         $app->register(MauticServiceProvider::class);
         check(config('mautic.default') === 'main', 'Missing package configuration defaults');
         check($app->make('mautic') instanceof Mautic, 'Manager binding failed');
+        check($app->make(Mautic::class) === $app->make('mautic'), 'Manager class alias failed');
+        check($app->make(MauticFactory::class) === $app->make('mautic.factory'), 'Factory class alias failed');
     };
     $tests['published migration runs without a global Schema alias'] = static function () use ($root) {
         require_once $root.'/src/migrations/0000_00_00_000000_mautic_api_consumer_key.php';
@@ -91,7 +93,7 @@ try {
         check(Schema::hasTable('mautic_consumer'), 'Migration did not create token table');
     };
     $tests['controller loads independently of the host application controller'] = static function () {
-        check(class_exists(\Triibo\Mautic\Http\Controllers\MauticController::class), 'Controller cannot autoload');
+        check(class_exists(\CostaMateus\Mautic\Http\Controllers\MauticController::class), 'Controller cannot autoload');
     };
     $tests['callback route dispatches and can be serialized for route caching'] = static function () use ($app) {
         MauticConsumer::create(['access_token' => 'existing', 'refresh_token' => 'refresh', 'token_type' => 'bearer', 'expires' => time() + 3600]);
@@ -153,7 +155,7 @@ try {
         };
         try {
             (new Mautic($app['config'], $factory))->request('GET', 'contacts');
-        } catch (\Triibo\Mautic\Exceptions\MauticException $e) {
+        } catch (\CostaMateus\Mautic\Exceptions\MauticException $e) {
             return;
         }
         throw new RuntimeException('Expected MauticException for missing token');

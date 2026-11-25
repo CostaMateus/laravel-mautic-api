@@ -1,6 +1,6 @@
 <?php
 
-namespace Triibo\Mautic;
+namespace CostaMateus\Mautic;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Contracts\Foundation\Application;
@@ -61,7 +61,7 @@ class MauticServiceProvider extends ServiceProvider
             return new Factories\MauticFactory();
         } );
 
-        $app->alias( "mautic.factory", "Triibo\Mautic\Factories\MauticFactory" );
+        $app->alias( "mautic.factory", "CostaMateus\Mautic\Factories\MauticFactory" );
     }
 
     /**
@@ -81,7 +81,7 @@ class MauticServiceProvider extends ServiceProvider
             return new Mautic( $config, $factory );
         } );
 
-        $app->alias( "mautic", "Triibo\Mautic\Mautic" );
+        $app->alias( "mautic", "CostaMateus\Mautic\Mautic" );
     }
 
     /**
@@ -95,7 +95,7 @@ class MauticServiceProvider extends ServiceProvider
     {
         $app[ "router" ]->group(
             [
-                "namespace" => "Triibo\Mautic\Http\Controllers",
+                "namespace" => "CostaMateus\Mautic\Http\Controllers",
                 "prefix" => "mautic",
             ], function () : void
             {

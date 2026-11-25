@@ -1,5 +1,30 @@
 # Changelog
 
+## 5.0.0 - 2026-11-25
+
+### Breaking change
+
+Rename the public PHP namespace from `Triibo\Mautic` to `CostaMateus\Mautic`
+throughout the package: PSR-4 autoloading, Laravel discovery metadata, provider
+bindings, routes, controllers, facade, factory, model, exception and tests.
+No compatibility aliases are provided for the old namespace.
+
+Consumers must update imports, manually registered providers, extended class
+names and other fully qualified references before booting the upgraded app.
+Drain jobs serialized with old class names before upgrading or migrate them
+explicitly, clear application caches and restart long-running workers.
+See the README upgrade instructions.
+
+Validation: all 14 regression checks pass on the seven supported PHP/Laravel
+combinations and experimental PHP 8.6/Laravel 13. Installation as a dependency
+also passes Laravel package discovery, facade alias, config and route checks
+under the new namespace. PHP 8.6/Laravel 12 retains the v4 upstream limitation.
+
+The Composer package name, dependency requirements, facade alias `Mautic`,
+container service names, routes, configuration keys, database table and migration
+remain unchanged. Existing credentials and token records are retained. No schema
+migration is required. Existing license and contributor credits are preserved.
+
 ## 4.0.0 - 2026-11-25
 
 ### Compatibility investigation

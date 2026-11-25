@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Triibo\Mautic\Http\Controllers\MauticController;
+use CostaMateus\Mautic\Http\Controllers\MauticController;
 
 /*
 |--------------------------------------------------------------------------

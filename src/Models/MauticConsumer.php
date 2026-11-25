@@ -1,6 +1,6 @@
 <?php
 
-namespace Triibo\Mautic\Models;
+namespace CostaMateus\Mautic\Models;
 
 use Illuminate\Database\Eloquent\Model;
 

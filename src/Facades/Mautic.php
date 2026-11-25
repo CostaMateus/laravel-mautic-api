@@ -1,6 +1,6 @@
 <?php
 
-namespace Triibo\Mautic\Facades;
+namespace CostaMateus\Mautic\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
