@@ -1,2 +1,4 @@
 
 .codegpt
+/vendor/
+/composer.lock

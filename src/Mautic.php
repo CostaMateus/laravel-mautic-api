@@ -2,7 +2,8 @@
 
 namespace Triibo\Mautic;
 
-use Mautic\{Factory, MauticConsumer};
+use Triibo\Mautic\Models\MauticConsumer;
+use Triibo\Mautic\Exceptions\MauticException;
 use Triibo\Mautic\Factories\MauticFactory;
 use GrahamCampbell\Manager\AbstractManager;
 use Illuminate\Contracts\Config\Repository;
@@ -12,7 +13,7 @@ class Mautic extends AbstractManager
     /**
      * The factory instance.
      *
-     * @var Factory
+     * @var MauticFactory
      */
     protected $factory;
 
@@ -52,7 +53,11 @@ class Mautic extends AbstractManager
      */
     public function request( ?string $method = null, ?string $endpoints = null, ?array $body = null )
     {
-        $consumer = MauticConsumer::whereNotNull( "id" )->orderBy( "created_at", "desc" )->first();
+        if ( $this->factory->getDefaultConnection()[ "version" ] === "BasicAuth" ) {
+            return $this->factory->callMautic( $method, $endpoints, $body, null );
+        }
+
+        $consumer = MauticConsumer::orderByDesc( "id" )->first();
 
         if ( empty( $consumer ) ) {
             // No consumer exists, create new one via OAuth flow
@@ -61,7 +66,7 @@ class Mautic extends AbstractManager
             // Token expired, try to refresh first
             if ( $consumer->refresh_token ) {
                 $refreshedConsumer = $this->factory->refreshToken( $consumer->refresh_token );
-                
+
                 if ( $refreshedConsumer instanceof MauticConsumer ) {
                     $consumer = $refreshedConsumer;
                 } else {
@@ -72,6 +77,10 @@ class Mautic extends AbstractManager
                 // No refresh token available, create new one via OAuth flow
                 $consumer = $this->factory->make( config( "mautic.connections.main" ) );
             }
+        }
+
+        if ( ! $consumer instanceof MauticConsumer ) {
+            throw new MauticException( "Mautic OAuth authorization did not return an access token." );
         }
 
         return $this->factory->callMautic( $method, $endpoints, $body, $consumer->access_token );

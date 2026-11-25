@@ -3,7 +3,7 @@
 namespace Triibo\Mautic\Http\Controllers;
 
 use Triibo\Mautic\Facades\Mautic;
-use App\Http\Controllers\Controller;
+use Illuminate\Routing\Controller;
 use Triibo\Mautic\Models\MauticConsumer;
 
 class MauticController extends Controller

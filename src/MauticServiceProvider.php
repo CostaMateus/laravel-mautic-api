@@ -28,6 +28,7 @@ class MauticServiceProvider extends ServiceProvider
      */
     public function register() : void
     {
+        $this->mergeConfigFrom( __DIR__."/config/mautic.php", "mautic" );
         $this->registerFactory( $this->app );
         $this->registerManager( $this->app );
         $this->registerRoutes( $this->app );

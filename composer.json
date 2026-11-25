@@ -2,7 +2,7 @@
     "name": "costamateus/laravel-mautic-api",
     "description": "Free and Open Source Marketing Automation API",
     "license": "MIT",
-    "keywords": ["mautic", "laravel", "laravel 10", "api", "sync", "automation", "email", "marketing"],
+    "keywords": ["mautic", "laravel", "api", "sync", "automation", "email", "marketing"],
     "authors": [{
         "name": "Mateus Costa",
         "email": "mateus@costamateus.com.br"
@@ -10,15 +10,24 @@
     "minimum-stability": "stable",
     "require": {
         "php": "^8.2",
-        "laravel/framework": "^12.0",
-        "mautic/api-library": "^3.1",
-        "guzzlehttp/guzzle": "^7.9",
-        "graham-campbell/manager": "^5.1",
-        "psr/log": "~2.0"
+        "ext-curl": "*",
+        "laravel/framework": "^12.0 || ^13.0",
+        "mautic/api-library": "^4.0",
+        "guzzlehttp/guzzle": "^7.17",
+        "graham-campbell/manager": "^5.3"
     },
     "autoload": {
         "psr-4": {
             "Triibo\\Mautic\\": "src/"
         }
+    },
+    "extra": {
+        "laravel": {
+            "providers": ["Triibo\\Mautic\\MauticServiceProvider"],
+            "aliases": {"Mautic": "Triibo\\Mautic\\Facades\\Mautic"}
+        }
+    },
+    "scripts": {
+        "test": "@php tests/compatibility.php"
     }
 }

@@ -1,51 +1,48 @@
+name: Compatibility
+
 on:
   push:
-    branches: [ master ]
+    branches: [master]
+    tags: ['v*']
   pull_request:
-    branches: [ master ]
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
-  build:
-
-    runs-on: ${{ matrix.operating-system }}
+  test:
+    runs-on: ubuntu-latest
+    continue-on-error: ${{ matrix.experimental }}
     strategy:
+      fail-fast: false
       matrix:
-        operating-system: [ubuntu-latest]
-        php-versions: ['8.2']
-    name: PHP ${{ matrix.php-versions }} Test on ${{ matrix.operating-system }}
-
-
+        php: ['8.2', '8.3', '8.4', '8.5']
+        laravel: ['^12.0', '^13.0']
+        experimental: [false]
+        exclude:
+          - php: '8.2'
+            laravel: '^13.0'
+        include:
+          # Laravel's published support table currently ends at PHP 8.5.
+          - php: '8.6'
+            laravel: '^12.0'
+            experimental: true
+          - php: '8.6'
+            laravel: '^13.0'
+            experimental: true
+    name: PHP ${{ matrix.php }} / Laravel ${{ matrix.laravel }}
     steps:
-    - uses: actions/checkout@v2
-
-    - name: Checkout
-      uses: actions/checkout@v2
-
-    - name: Install PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: ${{ matrix.php-versions }}
-
-    - name: Check PHP Version
-      run: php
-
-    - name: Validate composer.json and composer.lock
-      run: composer validate --strict
-
-    - name: Cache Composer packages
-      id: composer-cache
-      uses: actions/cache@v4
-      with:
-        path: vendor
-        key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-php-
-
-    - name: Install dependencies
-      run: composer install --prefer-dist --no-progress --no-suggest
-
-    # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
-    # Docs: https://getcomposer.org/doc/articles/scripts.md
-
-    # - name: Run test suite
-    #   run: composer run-script test
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: curl, mbstring, pdo_sqlite
+          coverage: none
+          tools: composer:v2
+      - run: composer validate --strict
+      - run: composer require "laravel/framework:${{ matrix.laravel }}" --no-update --no-interaction
+      - run: composer update --prefer-dist --no-progress --no-interaction --no-plugins
+      - run: composer test
+      - run: composer audit

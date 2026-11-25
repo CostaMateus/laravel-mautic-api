@@ -34,7 +34,7 @@ class MauticFactory
     {
         $now = time();
 
-        return ( $now > $expireTimestamp ) ? true : false;
+        return $now >= $expireTimestamp;
     }
 
     /**
@@ -191,11 +191,14 @@ class MauticFactory
      */
     protected function getClient( array $setting )
     {
-        session_name( "mauticOAuth" );
-        session_start();
+        if ( session_status() !== PHP_SESSION_ACTIVE )
+        {
+            session_name( "mauticOAuth" );
+            session_start();
+        }
 
         // Initiate the auth object
-        $initAuth = new ApiAuth();
+        $initAuth = new ApiAuth( new Client() );
         $auth = $initAuth->newAuth( $setting );
 
         // Initiate process for obtaining an access token; this will redirect the user to the $authorizationUrl and/or

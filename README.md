@@ -1,8 +1,17 @@
-# Mautic API in Laravel 11.
+# Mautic API for Laravel
 Free and Open Source Marketing Automation API
 
 ## Requirements
-* cURL support
+* PHP ^8.2 with cURL support
+* Laravel ^12.0 or ^13.0 (Laravel 13 requires PHP ^8.3)
+* Mautic API Library ^4.0, Guzzle ^7.17 and Graham Campbell Manager ^5.3
+
+Version **4.0.0** adds Laravel 13 support and upgrades the Mautic SDK to version 4.
+PHP 8.2–8.5 are covered by the compatibility matrix, subject to Laravel's own PHP requirements.
+PHP 8.6 checks are experimental until Laravel officially lists support for it.
+See [CHANGELOG.md](CHANGELOG.md) for the compatibility investigation, upgrade notes and validation limits.
+
+### Previous releases
 
 ### v 2.0.7
 * Laravel ^8.0
@@ -36,25 +45,10 @@ First, you'll need to require the package with Composer:
 ```sh
 composer require costamateus/laravel-mautic-api
 ```
-Aftwards, run `composer update` from your command line.
-
-Then, update `config/app.php` by adding an entry for the service provider.
-
-```php
-'providers' => [
-	// ...
-	Triibo\Mautic\MauticServiceProvider::class,
-],
-```
-Then, register class alias by adding an entry in aliases section
-```php
-'aliases' => [
-    // ...
-    'Mautic' => Triibo\Mautic\Facades\Mautic::class,
-],
-```
+Laravel automatically discovers the service provider and facade. If package discovery is disabled,
+register `Triibo\Mautic\MauticServiceProvider::class` in `bootstrap/providers.php`.
 Finally, from the command line run `php artisan vendor:publish --provider="Triibo\Mautic\MauticServiceProvider"` to publish the default configuration file.
-This will publish a configuration file name `mautic.php`, `consumer migration` and `consumer model`.
+This publishes `config/mautic.php` and the consumer migration. The model is autoloaded from the package.
 
 Then, run `php artisan migrate` migration command to create consumer table in your database.
 
@@ -76,9 +70,12 @@ MAUTIC_PASSWORD="password"
 ## Authorization
 This Library only supports `OAuth2` and `BasicAuth` Authentication.
 For OAuth2 you need to create a `OAuth2` client in order to use the api.
+For BasicAuth, set `"default" => "basic"` in `config/mautic.php`; no OAuth registration or token table is needed.
+The existing `MAUTIC_AUTH_VERSION` setting does not select the default connection.
 
 ## Registering Application
-In order to register you application with mautic ping this url this is one time registration.
+For OAuth2, visit this URL once in a browser to authorize the application. The OAuth handshake uses a native PHP session;
+the browser must retain its session cookie across the redirect. BasicAuth does not use this route.
 ```url
 http://your-app.com/mautic/application/register
 ```
@@ -460,3 +457,14 @@ Mautic::request('Delete','contacts/1/delete');
 
 Please refer to [Documentation](https://developer.mautic.org).
 for all customizable parameters.
+
+## Development
+
+```sh
+composer update --no-plugins
+composer test
+composer audit
+```
+
+The compatibility check uses an in-memory SQLite database and a local HTTP server.
+It requires `pdo_sqlite`, `proc_open` and an available loopback port, and never contacts a real Mautic server.
